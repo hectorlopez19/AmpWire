@@ -15,9 +15,8 @@ public class Home extends JFrame{
     private JPanel logoPanel;
     private JPanel projectsPanel;
     private JPanel addPanel;
-    private JPanel installExample;
-    private JLabel nameEx;
-    private JLabel loadEx;
+
+
     private JLabel logoLabel;
     private JScrollPane scrollP;
 
@@ -37,12 +36,17 @@ public class Home extends JFrame{
                 super.mouseExited(e);
                 HomeController.addPanelNotHover();
             }
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                HomeController.addProject();
+
+            }
         });
 
 
+
+
     }
-
-
 
 
     public JPanel getBgPanel() {
@@ -75,30 +79,6 @@ public class Home extends JFrame{
 
     public void setAddPanel(JPanel addPanel) {
         this.addPanel = addPanel;
-    }
-
-    public JPanel getInstallExample() {
-        return installExample;
-    }
-
-    public void setInstallExample(JPanel installExample) {
-        this.installExample = installExample;
-    }
-
-    public JLabel getNameEx() {
-        return nameEx;
-    }
-
-    public void setNameEx(JLabel nameEx) {
-        this.nameEx = nameEx;
-    }
-
-    public JLabel getLoadEx() {
-        return loadEx;
-    }
-
-    public void setLoadEx(JLabel loadEx) {
-        this.loadEx = loadEx;
     }
 
     public JLabel getLogoLabel() {

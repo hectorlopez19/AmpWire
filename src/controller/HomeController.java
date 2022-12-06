@@ -15,10 +15,8 @@ public class HomeController {
 
     // -------------------------------------------------- Start / End / Reset --------------------------------------------------
     public static void start() {
-        home.getScrollP().setViewportView(home.getProjectsPanel());
-        home.getScrollP().setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-        home.getScrollP().setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        home.getScrollP().getVerticalScrollBar().setVisible(false);
+        LookAndFeelController.styleToWindow(home);
+        setScrollSettings();
         showProjects();
         home.getAddPanel().setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         home.setSize(1000, 600);
@@ -28,7 +26,7 @@ public class HomeController {
     }
 
     public static void end() {
-
+        home.setVisible(false);
     }
 
     // ------------------------------------------------------- Elements --------------------------------------------------------
@@ -55,7 +53,6 @@ public class HomeController {
             }
         });
 
-
         JLabel nameLabel = new JLabel();
         nameLabel.setText(project.getName());
         nameLabel.setFont(new Font("Helvetica Neue", Font.PLAIN, 16));
@@ -64,7 +61,7 @@ public class HomeController {
         projectPanel.add(nameLabel);
 
         JLabel loadLabel = new JLabel();
-        loadLabel.setText(project.getLoadInstalled());
+        loadLabel.setText(project.getGeneralPanelboard().getName());
         loadLabel.setFont(new Font("Helvetica Neue", Font.PLAIN, 13));
         loadLabel.setForeground(Styles.primaryAccentColor);
         loadLabel.setHorizontalAlignment(SwingConstants.LEFT);
@@ -72,30 +69,39 @@ public class HomeController {
         projectPanel.add(loadLabel);
 
         return projectPanel;
-
-
     }
 
 
 
     // ------------------------------------------------------- Functions -------------------------------------------------------
+    public static void setScrollSettings() {
+        home.getScrollP().getVerticalScrollBar().setVisible(false);
+        home.getScrollP().setViewportView(home.getProjectsPanel());
+        home.getScrollP().setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        home.getScrollP().setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        home.getScrollP().getVerticalScrollBar().setBackground(Styles.primaryBgColor);
+    }
     public static void showProjects() {
         Project[] projects = model.getProjects();
-
-        home.getProjectsPanel().removeAll();
-        for(Project project : projects) {
-            JPanel newProject = newProjectPanel(project);
-            home.getProjectsPanel().add(newProject);
-            System.out.println("Project: " + project.getName());
+        if(projects[0] != null) {
+            home.getProjectsPanel().removeAll();
+            for(int i = 0; i < model.getProjectsCreated(); i++) {
+                Project project = model.getProjects()[i];
+                JPanel newProject = newProjectPanel(project);
+                home.getProjectsPanel().add(newProject);
+                System.out.println("Project: " + project.getName());
+            }
+            home.getProjectsPanel().add(home.getAddPanel());
+            int verticalSize = ((projects.length + 2) * 20) + ((projects.length + 1) * 80);
+            home.getProjectsPanel().setPreferredSize(new Dimension(550, verticalSize));
         }
-        home.getProjectsPanel().add(home.getAddPanel());
-        int verticalSize = ((projects.length + 2) * 20) + ((projects.length + 1) * 80);
-        home.getProjectsPanel().setPreferredSize(new Dimension(550, verticalSize));
+
     }
 
     // -------------------------------------------------------- Buttons --------------------------------------------------------
     public static void openProject(Project project) {
-        InstallationController.start(project);
+        end();
+        ProjectInfoController.start(project, project.getGeneralPanelboard().getName());
     }
 
     // -------------------- Hover --------------------
@@ -113,5 +119,12 @@ public class HomeController {
         actualProject.setBackground(new Color(30,42,62));
     }
 
+    public static void addProject() {
+        String name = JOptionPane.showInputDialog("Nombre:");
+        String panelboardName = JOptionPane.showInputDialog("Nombre de tablero: ");
+        model.createProject(name, panelboardName);
+        ProjectInfoController.start(model.getProjects()[model.getProjectsCreated() - 1], panelboardName);
+        end();
+    }
 
 }
